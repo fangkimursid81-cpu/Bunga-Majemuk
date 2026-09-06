@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bunga Majemuk - Matematika XI</title>
+    <style>
+        :root {
+            /* Light Theme (Green & Yellow) */
+            --primary: #00897b; /* Emerald Green */
+            --primary-dark: #004d40;
+            --secondary: #ffb300; /* Golden Yellow */
+            --secondary-light: #ffe082;
+            --bg-color: #f4fdf8;
+            --text-main: #263238;
+            --text-light: #546e7a;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --glass-bg: rgba(255, 255, 255, 0.82);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --shadow: 0 8px 32px rgba(0, 77, 64, 0.15);
+            --correct: #4caf50;
+            --wrong: #f44336;
+            --gradient-bg: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+        }
+
+        [data-theme="dark"] {
+            --primary: #26a69a;
+            --primary-dark: #00796b;
+            --secondary: #ffd54f;
+            --secondary-light: #ffca28;
+            --bg-color: #121212;
+            --text-main: #eceff1;
+            --text-light: #b0bec5;
+            --card-bg: rgba(30, 30, 30, 0.92);
+            --glass-bg: rgba(35, 35, 35, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --gradient-bg: linear-gradient(135deg, #1b5e20 0%, #004d40 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Custom Animated Cursor Elements */
+        body {
+            cursor: default;
+            background-color: var(--bg-color);
+            background-image: linear-gradient(rgba(244, 253, 248, 0.82), rgba(244, 253, 248, 0.90)), url('ChatGPT Image Sep 6, 2026, 04_20_43 PM.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        [data-theme="dark"] body {
+            background-image: linear-gradient(rgba(18, 18, 18, 0.86), rgba(18, 18, 18, 0.94)), url('ChatGPT Image Sep 6, 2026, 04_20_43 PM.png');
+        }
+
+        /* Custom Cursor Dot & Outer Ring */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 10px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            box-shadow: 0 0 10px var(--secondary);
+        }
+
+        .cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 36px;
+            height: 36px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s ease-out, height 0.25s ease-out, border-color 0.25s, background-color 0.25s, transform 0.15s ease-out;
+            box-shadow: 0 0 15px rgba(0, 137, 123, 0.4);
+        }
+
+        /* Hover animation state for cursor */
+        .cursor-ring.active-hover {
+            width: 60px;
+            height: 60px;
+            border-color: var(--secondary);
+            background-color: rgba(255, 179, 0, 0.2);
+            animation: cursorPulse 1.2s infinite ease-in-out;
+            box-shadow: 0 0 25px var(--secondary), inset 0 0 15px var(--secondary-light);
+        }
+
+        .cursor-dot.active-hover {
+            width: 14px;
+            height: 14px;
+            background-color: #ffffff;
+            box-shadow: 0 0 12px #ffffff;
+        }
+
+        @keyframes cursorPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.15); }
+        }
+
+        /* Particle Sparkles on Click/Hover */
+        .cursor-sparkle {
+            position: fixed;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 9998;
+            animation: sparkleFade 0.6s ease-out forwards;
+        }
+
+        @keyframes sparkleFade {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(0.3); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.5); }
+        }
+
+        /* Decorative Background Elements */
+        .bg-decor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            opacity: 0.05;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(circle at 10% 20%, var(--primary) 1px, transparent 1px),
+                radial-gradient(circle at 90% 80%, var(--secondary) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .math-symbols {
+            position: fixed;
+            font-size: 4rem;
+            opacity: 0.05;
+            color: var(--primary);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Utility Classes */
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        .slide-up { animation: slideUp 0.6s ease forwards; }
+        .text-center { text-align: center; }
+        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--secondary); }
+        .font-bold { font-weight: bold; }
+        .mt-1 { margin-top: 0.5rem; } .mt-2 { margin-top: 1rem; } .mt-4 { margin-top: 2rem; }
+        .mb-2 { margin-bottom: 1rem; } .mb-4 { margin-bottom: 2rem; }
+        .p-2 { padding: 1rem; } .p-4 { padding: 2rem; }
+        .flex { display: flex; } .flex-col { display: flex; flex-direction: column; }
+        .items-center { align-items: center; } .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 1rem; } .gap-4 { gap: 2rem; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
+        /* Animasi Bergerak & Melayang Submenu */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 8px 20px rgba(0, 137, 123, 0.25); }
+            50% { box-shadow: 0 14px 28px rgba(255, 179, 0, 0.45); }
+        }
+
+        /* App Container */
+        #app {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Global Header & Nav */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-controls button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 10px;
+            color: var(--primary);
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        .nav-controls button:hover { background: var(--secondary-light); color: var(--primary-dark); }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--glass-border);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--primary-dark);
+        }
+        .btn-secondary:hover {
+            background: #e6a200;
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        [data-theme="dark"] .btn-outline {
+            background: rgba(30, 30, 30, 0.8);
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-large {
+            font-size: 1.2rem;
+            padding: 1rem 2rem;
+        }
+
+        /* Cards & Containers */
+        .screen {
+            padding: 2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            margin-bottom: 1.5rem;
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .menu-item {
+            background: var(--gradient-bg);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            animation: float 3.5s ease-in-out infinite, pulseGlow 3s ease-in-out infinite;
+        }
+
+        /* Jeda animasi per item agar bergerak secara bergelombang */
+        .menu-item:nth-child(1) { animation-delay: 0s, 0s; }
+        .menu-item:nth-child(2) { animation-delay: 0.3s, 0.2s; }
+        .menu-item:nth-child(3) { animation-delay: 0.6s, 0.4s; }
+        .menu-item:nth-child(4) { animation-delay: 0.9s, 0.6s; }
+        .menu-item:nth-child(5) { animation-delay: 1.2s, 0.8s; }
+        .menu-item:nth-child(6) { animation-delay: 1.5s, 1.0s; }
+        .menu-item:nth-child(7) { animation-delay: 1.8s, 1.2s; }
+        .menu-item:nth-child(8) { animation-delay: 2.1s, 1.4s; }
+        .menu-item:nth-child(9) { animation-delay: 2.4s, 1.6s; }
+
+        .menu-item::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            transform: skewX(-20deg); transition: 0.5s;
+        }
+        .menu-item:hover::before { left: 150%; }
+        .menu-item:hover { 
+            animation-play-state: paused; 
+            transform: translateY(-14px) scale(1.06); 
+            box-shadow: 0 18px 36px rgba(255, 179, 0, 0.5); 
+        }
+        .menu-item img {
+            transition: transform 0.3s ease;
+        }
+        .menu-item:hover img {
+            transform: scale(1.1) rotate(3deg);
+        }
+
+        /* Splash Screen */
+        #screen-splash {
+            justify-content: center;
+            align-items: center;
+            background-image: linear-gradient(rgba(0, 77, 64, 0.75), rgba(0, 137, 123, 0.85)), url('ChatGPT Image Sep 6, 2026, 04_20_43 PM.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1000;
+        }
+        
+        #screen-home {
+            background: transparent;
+            padding: 2rem;
+            min-height: calc(100vh - 70px);
+        }
+
+        .splash-content { text-align: center; max-width: 600px; padding: 2.5rem; background: rgba(0, 0, 0, 0.35); border-radius: 20px; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.2); }
+        .splash-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.4); color: var(--secondary); }
+        .splash-subtitle { font-size: 1.5rem; margin-bottom: 2rem; letter-spacing: 2px; }
+        .developer-info { font-size: 1.1rem; margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 1rem; }
+
+        /* Content Formatting */
+        .formula-box {
+            background: var(--secondary-light);
+            color: var(--primary-dark);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.8rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            margin: 1.5rem 0;
+            border: 2px dashed var(--secondary);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] .formula-box { background: rgba(255,213,79,0.15); color: var(--secondary); }
+
+        .explanation-list { list-style: none; padding-left: 0; }
+        .explanation-list li { margin-bottom: 0.8rem; display: flex; align-items: baseline; gap: 10px; }
+        .badge { background: var(--primary); color: white; padding: 2px 8px; border-radius: 5px; font-weight: bold; font-family: monospace; }
+
+        /* Simulation Setup */
+        .input-group { display: flex; flex-direction: column; margin-bottom: 1rem; }
+        .input-group label { margin-bottom: 0.3rem; font-weight: bold; font-size: 0.9rem; color: var(--text-light); }
+        .input-group input { padding: 0.8rem; border: 2px solid var(--glass-border); border-radius: 10px; background: rgba(255,255,255,0.5); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.3s; }
+        [data-theme="dark"] .input-group input { background: rgba(0,0,0,0.3); }
+        .input-group input:focus { border-color: var(--primary); }
+        
+        .chart-container { display: flex; align-items: flex-end; justify-content: space-around; height: 250px; margin-top: 2rem; padding: 1rem 0; border-bottom: 2px solid var(--text-light); }
+        .bar-wrapper { display: flex; flex-direction: column; align-items: center; width: 20%; height: 100%; justify-content: flex-end; }
+        .bar { width: 60%; background: linear-gradient(to top, var(--primary), var(--secondary)); border-radius: 5px 5px 0 0; transition: height 1s ease-out; position: relative; }
+        .bar-label { font-size: 0.8rem; margin-top: 5px; }
+        .bar-value { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 0.7rem; font-weight: bold; background: var(--card-bg); padding: 2px 4px; border-radius: 4px; display: none; white-space: nowrap; }
+        .bar:hover .bar-value { display: block; z-index: 10; }
+
+        /* Quiz & Practice */
+        .option-btn { width: 100%; text-align: left; padding: 1rem; margin-bottom: 0.5rem; border: 2px solid var(--glass-border); border-radius: 10px; background: var(--card-bg); color: var(--text-main); cursor: pointer; transition: all 0.2s; font-size: 1rem; }
+        .option-btn:hover { border-color: var(--primary); background: rgba(0, 137, 123, 0.08); transform: translateX(5px); }
+        .option-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .option-btn.correct { background: var(--correct) !important; color: white !important; border-color: var(--correct) !important; }
+        .option-btn.wrong { background: var(--wrong) !important; color: white !important; border-color: var(--wrong) !important; }
+        
+        .feedback-box { margin-top: 1rem; padding: 1rem; border-radius: 10px; display: none; }
+        .feedback-box.show { display: block; animation: fadeIn 0.3s; }
+        .feedback-correct { background: rgba(76, 175, 80, 0.15); border-left: 4px solid var(--correct); }
+        .feedback-wrong { background: rgba(244, 67, 54, 0.15); border-left: 4px solid var(--wrong); }
+
+        .score-display { text-align: center; font-size: 4rem; font-weight: bold; color: var(--primary); margin: 1rem 0; text-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+        /* Accordion (Examples) */
+        .accordion-item { border: 1px solid var(--glass-border); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; }
+        .accordion-header { background: rgba(0,0,0,0.03); padding: 1rem; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        [data-theme="dark"] .accordion-header { background: rgba(255,255,255,0.05); }
+        .accordion-header:hover { background: rgba(0, 137, 123, 0.12); }
+        .accordion-content { padding: 0 1rem; max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; background: var(--card-bg); }
+        .accordion-content.active { padding: 1rem; max-height: 500px; }
+
+        /* Profile Card */
+        .profile-card { text-align: center; }
+        .profile-img { width: 150px; height: 150px; border-radius: 50%; margin: 0 auto 1rem; background: var(--gradient-bg); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: white; border: 4px solid var(--secondary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); overflow: hidden; }
+        .profile-img img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid-menu { grid-template-columns: 1fr; }
+            .screen { padding: 1rem; }
+            .splash-title { font-size: 2rem; }
+            .chart-container { height: 150px; }
+            .bar-value { font-size: 0.6rem; }
+        }
+
+        /* Confetti */
+        .confetti { position: fixed; width: 10px; height: 10px; background-color: #f00; top: -10px; z-index: 9999; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Animated Cursor -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+
+    <!-- Decorative Background -->
+    <div class="bg-decor"></div>
+    <div class="math-symbols" style="top: 10%; left: 5%;">%</div>
+    <div class="math-symbols" style="top: 80%; left: 80%;">Σ</div>
+    <div class="math-symbols" style="top: 30%; right: 10%;">A=P(1+r)ⁿ</div>
+    <div class="math-symbols" style="bottom: 15%; left: 15%;">√</div>
+
+    <div id="app">
+        <!-- SCREEN: SPLASH -->
+        <div id="screen-splash" class="screen flex-col">
+            <div class="splash-content slide-up">
+                <div class="mb-4" style="font-size: 4rem;">🎓💰</div>
+                <div style="font-size: 1.2rem; margin-bottom: 0.5rem; letter-spacing: 1px;">MULTIMEDIA PEMBELAJARAN INTERAKTIF</div>
+                <h1 class="splash-title">MATEMATIKA KELAS XI</h1>
+                <h2 class="splash-subtitle text-secondary">BUNGA MAJEMUK</h2>
+                <button class="btn btn-primary btn-large pulse mt-4" onclick="app.startApp()">MULAI BELAJAR 🚀</button>
+                <div class="developer-info">
+                    <p class="font-bold">Fangki Mursid, S.Pd</p>
+                    <p>SMAN 1 DULUPI</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Header (Hidden on Splash) -->
+        <header class="top-nav hidden" id="global-header">
+            <div class="flex items-center gap-2">
+                <button class="btn btn-outline" onclick="app.navigate('home')" id="btn-home-nav" title="Ke Beranda">🏠 Home</button>
+                <button class="btn btn-outline" onclick="app.goBack()" id="btn-back-nav" style="display:none;" title="Kembali">⬅️</button>
+            </div>
+            <div style="font-weight: bold; color: var(--primary);" id="header-title">Beranda</div>
+            <div class="nav-controls flex items-center">
+                <span id="progress-text" style="font-size: 0.8rem; font-weight: bold; margin-right: 10px; color: var(--primary);">0%</span>
+                <button onclick="app.toggleAudio()" title="Suara / TTS">🔊</button>
+                <button onclick="app.toggleTheme()" title="Gelap/Terang">🌓</button>
+                <button onclick="app.toggleFullscreen()" title="Layar Penuh">⛶</button>
+            </div>
+            <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+        </header>
+
+        <!-- SCREEN: HOME -->
+        <div id="screen-home" class="screen hidden fade-in">
+            <div class="text-center mb-4 p-4 rounded-xl" style="background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--glass-border); box-shadow: var(--shadow); max-width: 800px; margin-left: auto; margin-right: auto;">
+                <h2 class="text-primary font-bold" style="font-size: 2rem; text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">Pilih Menu Pembelajaran</h2>
+                <p class="font-bold" style="color: var(--primary-dark);">Selesaikan semua modul untuk mencapai 100%</p>
+            </div>
+            <div class="grid-menu">
+                <div class="menu-item" onclick="app.navigate('objectives')" style="padding: 1rem;">
+                    <img src="WhatsApp Image 2026-09-06 at 16.04.03.jpeg" alt="Tujuan Pembelajaran" style="width: 120px; height: auto; border-radius: 10px; margin-bottom: -10px;">
+                </div>
+                <div class="menu-item" onclick="app.navigate('material')" style="padding: 1rem;">
+                    <img src="WhatsApp Image 2026-09-06 at 16.04.37.jpeg" alt="Materi Pokok" style="width: 120px; height: auto; border-radius: 10px; margin-bottom: -10px;">
+                </div>
+                <div class="menu-item" onclick="app.navigate('simulation')" style="padding: 1rem;">
+                    <img src="WhatsApp Image 2026-09-06 at 16.05.53.jpeg" alt="Simulasi" style="width: 120px; height: auto; border-radius: 10px; margin-bottom: -10px;">
+                </div>
+                <div class="menu-item" onclick="app.navigate('examples')" style="padding: 1rem;">
+                    <img src="WhatsApp Image 2026-09-06 at 16.06.50.jpeg" alt="Contoh Soal" style="width: 120px; height: auto; border-radius: 10px; margin-bottom: -10px;">
+                </div>
+                <div class="menu-item" onclick="app.navigate('practice')" style="padding: 1rem;">
+                    <img src="WhatsApp Image 2026-09-06 at 16.07.18.jpeg" alt="Latihan Dasar" style="width: 120px; height: auto; border-radius: 10px; margin-bottom: -10px;">
+                </div>
+                <div class="menu-item" onclick="app.navigate('quiz')" style="padding: 1rem;">
+                    <img src="WhatsApp Image 2026-09-06 at 16.07.45.jpeg" alt="Evaluasi" style="width: 120px; height: auto; border-radius: 10px; margin-bottom: -10px;">
+                </div>
+                <div class="menu-item" onclick="app.navigate('game')" style="padding: 1rem;">
+                    <img src="WhatsApp Image 2026-09-06 at 16.08.09.jpeg" alt="Game Zone" style="width: 120px; height: auto; border-radius: 10px; margin-bottom: -10px;">
+                </div>
+                <div class="menu-item" onclick="app.navigate('reference')" style="padding: 1rem;">
+                    <img src="WhatsApp Image 2026-09-06 at 16.09.23.jpeg" alt="Referensi" style="width: 120px; height: auto; border-radius: 10px; margin-bottom: -10px;">
+                </div>
+                <div class="menu-item" onclick="app.navigate('developer')" style="padding: 1rem;">
+                    <img src="WhatsApp Image 2026-09-06 at 16.10.24.jpeg" alt="Pengembang" style="width: 120px; height: auto; border-radius: 10px; margin-bottom: -10px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: OBJECTIVES -->
+        <div id="screen-objectives" class="screen hidden slide-up">
+            <div class="card">
+                <h2 class="text-primary mb-2 text-center">🎯 Tujuan Pembelajaran</h2>
+                <p class="mb-4 text-center">Setelah mempelajari multimedia ini, peserta didik diharapkan mampu:</p>
+                <ul style="list-style-type: none; padding-left: 0;">
+                    <li class="mb-2 flex items-center gap-2">✅ Menjelaskan pengertian bunga majemuk.</li>
+                    <li class="mb-2 flex items-center gap-2">✅ Membedakan perhitungan bunga tunggal dan bunga majemuk.</li>
+                    <li class="mb-2 flex items-center gap-2">✅ Mengidentifikasi unsur-unsur (P, r, n, A) dalam perhitungan.</li>
+                    <li class="mb-2 flex items-center gap-2">✅ Menentukan dan menggunakan rumus bunga majemuk dengan benar.</li>
+                    <li class="mb-2 flex items-center gap-2">✅ Menghitung nilai akhir investasi atau tabungan.</li>
+                    <li class="mb-2 flex items-center gap-2">✅ Menentukan modal awal berdasarkan nilai akhir.</li>
+                    <li class="mb-2 flex items-center gap-2">✅ Menyelesaikan masalah kontekstual keuangan sehari-hari.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SCREEN: MATERIAL -->
+        <div id="screen-material" class="screen hidden slide-up">
+            <div class="card mb-4 relative">
+                <button class="btn btn-secondary" style="position: absolute; top: 10px; right: 10px; padding: 5px 10px; font-size: 0.8rem;" onclick="app.speakText('Definisi Bunga Majemuk. Bunga majemuk adalah bunga yang setiap periodenya ditambahkan ke modal utama, sehingga pada periode berikutnya, bunga dihitung dari modal yang sudah bertambah tersebut.')">🔊 Dengarkan</button>
+                <h2 class="text-primary mb-2">📚 Apa itu Bunga Majemuk?</h2>
+                <p class="mb-2" style="font-size: 1.1rem; line-height: 1.6;">
+                    <strong>Bunga majemuk</strong> adalah bunga yang dihitung berdasarkan modal awal ditambah bunga yang telah diperoleh pada periode sebelumnya. 
+                </p>
+                <div class="p-4 mt-2 mb-2" style="background: rgba(0, 137, 123, 0.1); border-left: 4px solid var(--primary); border-radius: 0 10px 10px 0;">
+                    <i>"Bunga berbunga."</i> Modal → Dapat Bunga → Modal Bertambah → Dapat Bunga Lebih Besar → dan seterusnya.
+                </div>
+                
+                <h3 class="mt-4 mb-2">Perbandingan:</h3>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 p-4 border border-glass-border rounded-lg bg-glass-bg">
+                        <h4 class="text-secondary mb-2">Bunga Tunggal</h4>
+                        <p>Bunga setiap periode <strong>selalu tetap</strong> karena dihitung hanya dari Modal Awal.</p>
+                    </div>
+                    <div class="flex-1 p-4 border border-glass-border rounded-lg bg-glass-bg">
+                        <h4 class="text-primary mb-2">Bunga Majemuk</h4>
+                        <p>Bunga setiap periode <strong>semakin besar</strong> karena dihitung dari Saldo Terakhir.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <button class="btn btn-secondary" style="position: absolute; top: 10px; right: 10px; padding: 5px 10px; font-size: 0.8rem;" onclick="app.speakText('Rumus Bunga Majemuk adalah A sama dengan P dikali satu tambah r pangkat n.')">🔊 Dengarkan</button>
+                <h2 class="text-primary mb-2">🧮 Rumus Bunga Majemuk</h2>
+                <div class="formula-box">
+                    A = P(1 + r)ⁿ
+                </div>
+                <div class="text-center mb-4">
+                    <button class="btn btn-outline" onclick="document.getElementById('rumus-detail').classList.toggle('hidden')">Tampilkan Penjelasan Rumus</button>
+                </div>
+                <div id="rumus-detail" class="hidden fade-in bg-glass-bg p-4 rounded-lg">
+                    <ul class="explanation-list">
+                        <li><span class="badge">A</span> = <strong>Nilai Akhir</strong> (Modal beserta bunganya)</li>
+                        <li><span class="badge">P</span> = <strong>Modal Awal</strong> (Principal)</li>
+                        <li><span class="badge">r</span> = <strong>Suku Bunga</strong> per periode (dalam bentuk desimal)</li>
+                        <li><span class="badge">n</span> = <strong>Banyak Periode</strong> (waktu)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: SIMULATION -->
+        <div id="screen-simulation" class="screen hidden slide-up">
+            <div class="card">
+                <h2 class="text-primary mb-2 text-center">📈 Kalkulator Simulasi Pertumbuhan</h2>
+                <p class="text-center text-light mb-4">Ubah nilai di bawah ini untuk melihat pertumbuhan tabunganmu!</p>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 2rem;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <div class="input-group">
+                            <label>Modal Awal (Rp)</label>
+                            <input type="number" id="sim-p" value="1000000" step="100000">
+                        </div>
+                        <div class="input-group">
+                            <label>Suku Bunga per Tahun (%)</label>
+                            <input type="number" id="sim-r" value="10" step="1">
+                        </div>
+                        <div class="input-group">
+                            <label>Jumlah Tahun (Periode)</label>
+                            <input type="number" id="sim-n" value="3" min="1" max="10">
+                        </div>
+                        <button class="btn btn-primary w-full mt-2" onclick="app.runSimulation()" style="width:100%">HITUNG & LIHAT GRAFIK</button>
+                    </div>
+                    
+                    <div style="flex: 1.5; min-width: 300px; display: flex; flex-direction: column; justify-content: center;">
+                        <div style="background: var(--glass-bg); padding: 1.5rem; border-radius: 15px; border: 1px solid var(--primary);">
+                            <h3 class="mb-2">Hasil Perhitungan:</h3>
+                            <p class="text-light">Nilai Akhir (A): <strong id="sim-res-a" class="text-primary" style="font-size:1.5rem">Rp 1.331.000</strong></p>
+                            <p class="text-light mt-1">Total Bunga Diperoleh: <strong id="sim-res-b">Rp 331.000</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container" id="sim-chart"></div>
+            </div>
+        </div>
+
+        <!-- SCREEN: EXAMPLES -->
+        <div id="screen-examples" class="screen hidden slide-up">
+            <div class="card">
+                <h2 class="text-primary mb-4 text-center">📝 5 Contoh Soal & Pembahasan</h2>
+                <div id="example-container"></div>
+            </div>
+        </div>
+
+        <!-- SCREEN: PRACTICE -->
+        <div id="screen-practice" class="screen hidden slide-up">
+            <div class="card">
+                <h2 class="text-primary mb-2 text-center">✏️ Latihan Dasar</h2>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="font-bold">Soal <span id="prac-current">1</span> dari 5</span>
+                    <span class="badge" id="prac-difficulty">Mudah</span>
+                </div>
+                
+                <div id="prac-question-text" class="mb-4 text-lg">Pertanyaan memuat...</div>
+                <div id="prac-options" class="mb-4"></div>
+
+                <div id="prac-feedback" class="feedback-box">
+                    <p id="prac-feedback-msg" class="font-bold mb-1"></p>
+                    <p id="prac-feedback-desc" class="text-sm"></p>
+                </div>
+
+                <div class="flex justify-between mt-4">
+                    <button class="btn btn-outline" onclick="app.checkPracticeAnswer()" id="btn-prac-check">Cek Jawaban</button>
+                    <button class="btn btn-primary hidden" onclick="app.nextPractice()" id="btn-prac-next">Selanjutnya ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: QUIZ -->
+        <div id="screen-quiz" class="screen hidden slide-up">
+            <div id="quiz-intro" class="card text-center">
+                <h2 class="text-primary mb-4">🏆 Evaluasi Bunga Majemuk</h2>
+                <p class="mb-2">Terdiri dari 20 soal pilihan ganda.</p>
+                <p class="mb-4 text-light">Skor maksimal: 100 poin.</p>
+                <button class="btn btn-primary btn-large" onclick="app.startQuiz()">Mulai Ujian</button>
+            </div>
+
+            <div id="quiz-active" class="card hidden">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <span class="font-bold">Soal <span id="quiz-current">1</span> / 20</span>
+                    <span class="badge" style="background: var(--secondary); color: var(--primary-dark);">Poin: 5</span>
+                </div>
+                
+                <div id="quiz-question-text" class="mb-4 text-lg font-bold"></div>
+                <div id="quiz-options" class="flex-col gap-2"></div>
+
+                <div class="flex justify-end mt-4">
+                    <button class="btn btn-primary" onclick="app.nextQuizQuestion()" id="btn-quiz-next" disabled>Selanjutnya ➡️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: GAME -->
+        <div id="screen-game" class="screen hidden slide-up">
+            <div id="game-intro" class="card text-center">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎮</div>
+                <h2 class="text-primary mb-2">BUNGA MAJEMUK CHALLENGE</h2>
+                <p class="mb-4 text-light">Uji kecepatan dan pemahamanmu dalam berbagai tantangan!</p>
+                <button class="btn btn-secondary btn-large" onclick="app.startGame()">MAIN SEKARANG</button>
+            </div>
+
+            <div id="game-active" class="card hidden text-center">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="font-bold text-primary">Level <span id="game-level">1</span></div>
+                    <div class="font-bold text-secondary" style="font-size: 1.5rem;">⏱️ <span id="game-timer">15</span>s</div>
+                    <div><span id="game-lives" style="font-size: 1.2rem;">❤️❤️❤️</span></div>
+                </div>
+                
+                <h3 id="game-question" class="mb-4 mt-2" style="min-height: 60px;">Pertanyaan memuat...</h3>
+                <div id="game-area" class="flex-col gap-2 mb-4"></div>
+                <div id="game-feedback" style="font-size: 1.2rem; font-weight: bold; min-height: 30px;"></div>
+                <div class="mt-4 text-left">Skor: <span id="game-score" class="font-bold text-primary" style="font-size: 1.2rem;">0</span></div>
+            </div>
+        </div>
+
+        <!-- SCREEN: RESULT -->
+        <div id="screen-result" class="screen hidden fade-in text-center">
+            <div class="card" style="background: linear-gradient(135deg, var(--card-bg), rgba(255, 215, 0, 0.15));">
+                <div style="font-size: 4rem; margin-bottom: 1rem;" id="result-icon">🏆</div>
+                <h2 class="text-primary mb-2" id="result-title">EVALUASI SELESAI!</h2>
+                <div class="score-display" id="result-score">100</div>
+                
+                <div class="p-4 bg-glass-bg rounded-lg inline-block mb-4 text-left border border-glass-border">
+                    <p>✅ Benar: <strong id="result-correct">20</strong></p>
+                    <p>❌ Salah: <strong id="result-wrong">0</strong></p>
+                    <p>🎖 Kategori: <strong id="result-category" class="text-secondary">Sangat Baik</strong></p>
+                </div>
+                
+                <div class="flex justify-center gap-4 mt-2">
+                    <button class="btn btn-outline" onclick="app.navigate('quiz')">Ulangi Latihan</button>
+                    <button class="btn btn-primary" onclick="app.navigate('home')">Kembali ke Home</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: REFERENCE -->
+        <div id="screen-reference" class="screen hidden slide-up">
+            <div class="card">
+                <h2 class="text-primary mb-4 text-center">📖 Referensi Pembelajaran</h2>
+                <ul class="explanation-list">
+                    <li>📚 <strong>Buku Paket:</strong> Buku Siswa Matematika Kelas XI SMA/MA Kurikulum Merdeka. Kemdikbud.</li>
+                    <li>📚 <strong>Matematika Keuangan:</strong> Dasar-dasar Perhitungan Bunga dan Anuitas.</li>
+                    <li>🌐 <strong>Modul Guru:</strong> Materi Pembelajaran Bunga Majemuk oleh Fangki Mursid, S.Pd.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SCREEN: DEVELOPER -->
+        <div id="screen-developer" class="screen hidden slide-up">
+            <div class="card profile-card" style="max-width: 400px; margin: 0 auto;">
+                <div class="profile-img">
+                    <img src="WhatsApp Image 2026-09-06 at 10.14.31.jpeg" alt="Foto Pengembang" onerror="this.onerror=null; this.parentElement.innerHTML='👨‍🏫';">
+                </div>
+                <h2 class="text-primary mt-2">Fangki Mursid, S.Pd</h2>
+                <p class="text-secondary font-bold mb-2">Guru Matematika</p>
+                <div class="p-2 bg-glass-bg rounded-lg text-left mt-4 border border-glass-border">
+                    <p class="mb-1">🏫 <strong>Instansi:</strong> SMAN 1 DULUPI</p>
+                    <p class="mb-1">💻 <strong>Peran:</strong> Pengembang Multimedia Interaktif</p>
+                    <p class="mb-1">🎯 <strong>Materi:</strong> Bunga Majemuk Kelas XI</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Data Structures
+        const contentData = {
+            examples: [
+                {
+                    q: "Andi menabung Rp2.000.000 dengan bunga majemuk 5% per tahun selama 3 tahun. Tentukan nilai akhir tabungan.",
+                    d: "P = Rp 2.000.000<br>r = 5% = 0.05 per tahun<br>n = 3 tahun",
+                    t: "Nilai Akhir (A) ?",
+                    f: "A = P(1 + r)ⁿ",
+                    s: "A = 2.000.000(1 + 0.05)³<br>A = 2.000.000(1.05)³<br>A = 2.000.000(1.157625)",
+                    j: "A = <strong>Rp 2.315.250</strong>"
+                },
+                {
+                    q: "Modal Rp5.000.000 diinvestasikan dengan bunga majemuk 8% per tahun selama 2 tahun. Tentukan nilai akhirnya.",
+                    d: "P = Rp 5.000.000<br>r = 8% = 0.08 per tahun<br>n = 2 tahun",
+                    t: "Nilai Akhir (A) ?",
+                    f: "A = P(1 + r)ⁿ",
+                    s: "A = 5.000.000(1 + 0.08)²<br>A = 5.000.000(1.08)²<br>A = 5.000.000(1.1664)",
+                    j: "A = <strong>Rp 5.832.000</strong>"
+                },
+                {
+                    q: "Seseorang menabung Rp3.000.000 dengan bunga majemuk 10% per tahun selama 4 tahun. Tentukan total bunga yang diperoleh.",
+                    d: "P = Rp 3.000.000<br>r = 10% = 0.1 per tahun<br>n = 4 tahun",
+                    t: "Total Bunga (B) ?",
+                    f: "1. Cari A: A = P(1 + r)ⁿ<br>2. Cari Bunga: B = A - P",
+                    s: "A = 3.000.000(1 + 0.1)⁴ = 4.392.300<br>Bunga = 4.392.300 - 3.000.000",
+                    j: "Total Bunga = <strong>Rp 1.392.300</strong>"
+                },
+                {
+                    q: "Nilai akhir suatu investasi setelah 3 tahun adalah Rp13.310.000 dengan bunga majemuk 10% per tahun. Tentukan modal awal.",
+                    d: "A = Rp 13.310.000<br>r = 10% = 0.1 per tahun<br>n = 3 tahun",
+                    t: "Modal Awal (P) ?",
+                    f: "P = A / (1 + r)ⁿ",
+                    s: "13.310.000 = P(1.1)³ => P = 13.310.000 / 1.331",
+                    j: "P = <strong>Rp 10.000.000</strong>"
+                },
+                {
+                    q: "Modal Rp10.000.000 mendapat bunga majemuk 6% per tahun selama 5 tahun. Tentukan nilai akhir investasi.",
+                    d: "P = Rp 10.000.000<br>r = 6% = 0.06 per tahun<br>n = 5 tahun",
+                    t: "Nilai Akhir (A) ?",
+                    f: "A = P(1 + r)ⁿ",
+                    s: "A = 10.000.000(1.06)⁵ ≈ 10.000.000(1.338225)",
+                    j: "A = <strong>Rp 13.382.250</strong>"
+                }
+            ],
+            practice: [
+                { diff: "Mudah", q: "Apa rumus untuk mencari Nilai Akhir pada Bunga Majemuk?", opts: ["A = P + (P × r × n)", "A = P(1 + r)ⁿ", "A = P(1 + n)ʳ", "P = A(1 + r)ⁿ"], a: 1, exp: "Rumus baku bunga majemuk adalah A = P(1 + r)ⁿ." },
+                { diff: "Mudah", q: "Pada rumus bunga majemuk, variabel 'P' melambangkan...", opts: ["Periode waktu", "Persentase bunga", "Modal Awal", "Nilai Akhir"], a: 2, exp: "P singkatan dari Principal (Modal Awal)." },
+                { diff: "Sedang", q: "Modal Rp 1.000.000 dibungakan majemuk 10% per tahun. Berapa saldo akhir di tahun ke-2?", opts: ["Rp 1.200.000", "Rp 1.210.000", "Rp 1.100.000", "Rp 1.221.000"], a: 1, exp: "A = 1.000.000(1+0.1)² = Rp 1.210.000" },
+                { diff: "Sedang", q: "Bunga yang dihitung berdasarkan modal awal dan tambahan bunga dari periode sebelumnya disebut...", opts: ["Bunga Tunggal", "Bunga Flat", "Bunga Efektif", "Bunga Majemuk"], a: 3, exp: "Inilah definisi utama dari Bunga Majemuk." },
+                { diff: "HOTS", q: "Jika suku bunga majemuk dihitung per semester (setengah tahun), maka jumlah periode (n) untuk 1 tahun adalah...", opts: ["1", "2", "3", "4"], a: 1, exp: "1 tahun memiliki 2 semester, maka n = 2." }
+            ],
+            quiz: [
+                { q: "1. Nilai 'r' dalam rumus bunga majemuk melambangkan...", opts: ["Modal Awal", "Nilai Akhir", "Suku Bunga", "Periode"], a: 2, exp: "'r' adalah rate atau suku bunga." },
+                { q: "2. Bunga yang selalu dihitung dari modal awal saja disebut...", opts: ["Bunga Majemuk", "Bunga Tunggal", "Bunga Bank", "Bunga Obligasi"], a: 1, exp: "Bunga tunggal tidak mengakumulasikan bunga sebelumnya." },
+                { q: "3. Rumus menentukan besarnya Total Bunga majemuk adalah...", opts: ["A - P", "P - A", "A + P", "P × r × n"], a: 0, exp: "Total Bunga = Nilai Akhir (A) - Modal Awal (P)." },
+                { q: "4. Penulisan desimal yang benar untuk suku bunga 5% adalah...", opts: ["0.5", "0.05", "5.0", "0.005"], a: 1, exp: "5% = 5/100 = 0.05" },
+                { q: "5. Nilai 'n' pada rumus bunga majemuk diletakkan sebagai...", opts: ["Pengali", "Pembagi", "Pangkat (Eksponen)", "Akar"], a: 2, exp: "Rumusnya A = P(1+r)ⁿ, 'n' di posisi pangkat." },
+                { q: "6. Modal Rp 2.000.000 dibungakan majemuk 5% per tahun. Nilai di akhir tahun ke-1 adalah...", opts: ["Rp 2.050.000", "Rp 2.100.000", "Rp 2.150.000", "Rp 2.200.000"], a: 1, exp: "2.000.000 * 1.05 = Rp 2.100.000." },
+                { q: "7. Modal Rp 4.000.000 diinvestasikan dengan bunga majemuk 10% per tahun selama 2 tahun. Nilai akhirnya...", opts: ["Rp 4.800.000", "Rp 4.840.000", "Rp 4.400.000", "Rp 4.880.000"], a: 1, exp: "A = 4.000.000(1.1)² = Rp 4.840.000" },
+                { q: "8. Jika modal awal P=1.000.000, n=2, r=20%, maka nilai A adalah...", opts: ["Rp 1.400.000", "Rp 1.440.000", "Rp 1.200.000", "Rp 1.420.000"], a: 1, exp: "A = 1.000.000(1.2)² = Rp 1.440.000" },
+                { q: "9. Sistem bunga apakah yang memberikan pertumbuhan lebih cepat dalam jangka panjang?", opts: ["Bunga Tunggal", "Bunga Majemuk", "Bunga Flat", "Bunga Sederhana"], a: 1, exp: "Bunga majemuk bertumbuh secara eksponensial." },
+                { q: "10. Pak Budi menabung Rp 5.000.000 dengan bunga majemuk 2% per bulan. Saldo di akhir bulan ke-2 adalah...", opts: ["Rp 5.200.000", "Rp 5.202.000", "Rp 5.100.000", "Rp 5.204.000"], a: 1, exp: "A = 5.000.000(1.02)² = Rp 5.202.000" },
+                { q: "11. Diketahui A = Rp 1.210.000, r = 10% per tahun, n = 2 tahun. Berapa Modal Awal (P)?", opts: ["Rp 1.000.000", "Rp 900.000", "Rp 1.100.000", "Rp 1.010.000"], a: 0, exp: "P = 1.210.000 / (1.1)² = Rp 1.000.000" },
+                { q: "12. Investasi Rp 10.000.000 menjadi Rp 13.310.000 dalam 3 tahun. Suku bunganya adalah...", opts: ["5%", "8%", "10%", "12%"], a: 2, exp: "13.310.000 = 10.000.000(1+r)³ => r = 10%" },
+                { q: "13. Suku bunga 4% per semester selama 2 tahun berarti nilai n adalah...", opts: ["2", "4", "6", "8"], a: 1, exp: "2 tahun = 4 semester (n=4)." },
+                { q: "14. Grafik pertumbuhan uang pada bunga majemuk berbentuk...", opts: ["Garis lurus", "Garis menurun", "Eksponensial (Melengkung naik)", "Tetap"], a: 2, exp: "Grafiknya melengkung naik secara eksponensial." },
+                { q: "15. Total bunga dari modal Rp 10.000.000 dengan bunga majemuk 5% selama 2 tahun adalah...", opts: ["Rp 1.000.000", "Rp 1.025.000", "Rp 1.050.000", "Rp 1.100.000"], a: 1, exp: "A = 10M(1.05)² = 11.025.000. Bunga = Rp 1.025.000" },
+                { q: "16. Pertumbuhan nilai investasi bunga majemuk dipengaruhi oleh...", opts: ["Suku bunga dan periode waktu", "Modal awal saja", "Pajak bank saja", "Jenis bank"], a: 0, exp: "Suku bunga (r) dan periode (n) menentukan eksponensialnya." },
+                { q: "17. Jika tingkat inflasi lebih tinggi dari bunga majemuk tabungan, nilai riil uang akan...", opts: ["Bertambah", "Berkurang", "Tetap", "Sama"], a: 1, exp: "Daya beli berkurang karena inflasi melampaui pertumbuhan Bunga." },
+                { q: "18. Pada akhir tahun ke-1, hasil perhitungan Bunga Tunggal dan Majemuk (P & r sama) adalah...", opts: ["Bunga Majemuk lebih besar", "Bunga Tunggal lebih besar", "Sama besar", "Tidak tentu"], a: 2, exp: "Pada periode ke-1 nilainya masih sama persis." },
+                { q: "19. Rumus bunga majemuk bila dibayarkan per semester dengan bunga tahunan r adalah...", opts: ["A = P(1 + r)ⁿ", "A = P(1 + r/2)^(2n)", "A = P(1 + 2r)^(n/2)", "A = P(1 + r)⁵"], a: 1, exp: "Suku bunga dibagi 2 dan periode dikali 2." },
+                { q: "20. Meminjam Rp 1.000.000 bunga 10% per bulan. Akhir bulan ke-1 bayar Rp 500.000. Sisa utang...", opts: ["Rp 500.000", "Rp 600.000", "Rp 550.000", "Rp 650.000"], a: 1, exp: "Total = 1.100.000 - 500.000 = Rp 600.000" }
+            ],
+            games: [
+                { q: "Bunga Majemuk selalu lebih kecil dari Bunga Tunggal dalam jangka panjang.", a: false },
+                { q: "Variabel 'A' singkatan dari Modal Awal.", a: false },
+                { q: "Grafik pertumbuhan Bunga Majemuk berbentuk...", opts: ["Lurus", "Melengkung Naik", "Menurun"], a: 1 },
+                { q: "Pada periode pertama, Bunga Tunggal dan Bunga Majemuk bernilai sama.", a: true },
+                { q: "Singkatan dari Principal (Modal Awal) adalah huruf...", opts: ["P", "A", "r", "n"], a: 0 }
+            ]
+        };
+
+        const app = {
+            state: {
+                progress: { splash: true, home: false, objectives: false, material: false, simulation: false, examples: false, practice: false, quiz: false, game: false, reference: false, developer: false },
+                currentScreen: 'splash',
+                theme: 'light',
+                isAudioOn: true,
+                practiceCurrent: 0,
+                quizCurrent: 0,
+                quizScore: 0,
+                quizAnswers: [],
+                game: { active: false, q: 0, score: 0, lives: 3, timer: null, timeVal: 15 }
+            },
+
+            audioCtx: null,
+
+            playSound(type) {
+                if (!this.state.isAudioOn) return;
+                
+                try {
+                    if (!this.audioCtx) {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        if (AudioContext) {
+                            this.audioCtx = new AudioContext();
+                        }
+                    }
+                    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+                        this.audioCtx.resume();
+                    }
+                    if (!this.audioCtx) return;
+
+                    const now = this.audioCtx.currentTime;
+                    const osc = this.audioCtx.createOscillator();
+                    const gain = this.audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+
+                    if (type === 'enter') {
+                        // Suara saat MASUK MENU: Nada naik cerah (chime)
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(380, now);
+                        osc.frequency.exponentialRampToValueAtTime(760, now + 0.14);
+                        gain.gain.setValueAtTime(0.15, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+                        osc.start(now);
+                        osc.stop(now + 0.14);
+                    } else if (type === 'exit') {
+                        // Suara saat KELUAR MENU / KEMBALI: Nada turun lembut
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(620, now);
+                        osc.frequency.exponentialRampToValueAtTime(310, now + 0.14);
+                        gain.gain.setValueAtTime(0.15, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+                        osc.start(now);
+                        osc.stop(now + 0.14);
+                    } else {
+                        // Suara KLIK TOMBOL BIASA: Pop singkat
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(520, now);
+                        osc.frequency.exponentialRampToValueAtTime(160, now + 0.05);
+                        gain.gain.setValueAtTime(0.1, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                        osc.start(now);
+                        osc.stop(now + 0.05);
+                    }
+                } catch (e) {
+                    console.log('Audio Context Info:', e);
+                }
+            },
+
+            init() {
+                const savedState = localStorage.getItem('bungaMajemukProgress');
+                const savedTheme = localStorage.getItem('bungaMajemukTheme');
+                if (savedState) {
+                    let parsed = JSON.parse(savedState);
+                    for(let key in this.state.progress) {
+                        if(parsed[key] !== undefined) this.state.progress[key] = parsed[key];
+                    }
+                }
+                if (savedTheme) {
+                    this.state.theme = savedTheme;
+                    document.documentElement.setAttribute('data-theme', savedTheme);
+                }
+
+                this.setupCursor();
+                this.renderExamples();
+                this.updateProgressBar();
+                this.runSimulation();
+            },
+
+            setupCursor() {
+                const dot = document.getElementById('cursor-dot');
+                const ring = document.getElementById('cursor-ring');
+                let mouseX = 0, mouseY = 0;
+                let ringX = 0, ringY = 0;
+
+                window.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    dot.style.left = `${mouseX}px`;
+                    dot.style.top = `${mouseY}px`;
+                });
+
+                function renderCursor() {
+                    ringX += (mouseX - ringX) * 0.18;
+                    ringY += (mouseY - ringY) * 0.18;
+                    ring.style.left = `${ringX}px`;
+                    ring.style.top = `${ringY}px`;
+                    requestAnimationFrame(renderCursor);
+                }
+                requestAnimationFrame(renderCursor);
+
+                // Add hover effect listeners to interactive elements
+                const attachCursorListeners = () => {
+                    const interactives = document.querySelectorAll('.menu-item, .btn, button, input, .option-btn, .accordion-header');
+                    interactives.forEach(el => {
+                        el.addEventListener('mouseenter', (e) => {
+                            ring.classList.add('active-hover');
+                            dot.classList.add('active-hover');
+                            app.createSparkles(e.clientX, e.clientY, 4);
+                        });
+                        el.addEventListener('mouseleave', () => {
+                            ring.classList.remove('active-hover');
+                            dot.classList.remove('active-hover');
+                        });
+                    });
+                };
+
+                attachCursorListeners();
+                
+                // Click burst effect & Audio click listener
+                window.addEventListener('click', (e) => {
+                    app.createSparkles(e.clientX, e.clientY, 8);
+                    const btn = e.target.closest('button, .btn, .option-btn, .accordion-header, .menu-item');
+                    if (btn) {
+                        const onclickAttr = btn.getAttribute('onclick') || '';
+                        if (!onclickAttr.includes('navigate') && !onclickAttr.includes('goBack') && !onclickAttr.includes('startApp')) {
+                            app.playSound('click');
+                        }
+                    }
+                });
+            },
+
+            createSparkles(x, y, count) {
+                for(let i=0; i<count; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'cursor-sparkle';
+                    p.style.left = `${x}px`;
+                    p.style.top = `${y}px`;
+                    p.style.width = `${Math.random()*8 + 4}px`;
+                    p.style.height = p.style.width;
+                    p.style.backgroundColor = Math.random() > 0.5 ? '#ffb300' : '#00897b';
+                    
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 40 + 10;
+                    const tx = (Math.cos(angle) * distance) + 'px';
+                    const ty = (Math.sin(angle) * distance) + 'px';
+                    
+                    p.style.setProperty('--tx', tx);
+                    p.style.setProperty('--ty', ty);
+                    document.body.appendChild(p);
+                    
+                    setTimeout(() => p.remove(), 600);
+                }
+            },
+
+            saveProgress() {
+                localStorage.setItem('bungaMajemukProgress', JSON.stringify(this.state.progress));
+                this.updateProgressBar();
+            },
+
+            updateProgressBar() {
+                const keys = Object.keys(this.state.progress);
+                const visited = keys.filter(k => this.state.progress[k] === true).length;
+                const percentage = Math.round((visited / keys.length) * 100);
+                
+                const pb = document.getElementById('progress-bar');
+                const pt = document.getElementById('progress-text');
+                if(pb && pt) {
+                    pb.style.width = `${percentage}%`;
+                    pt.innerText = `${percentage}%`;
+                }
+            },
+
+            navigate(screenId) {
+                window.speechSynthesis.cancel();
+                if(this.state.game.timer) clearInterval(this.state.game.timer);
+
+                const prevScreen = this.state.currentScreen;
+
+                // Mainkan suara sesuai arah navigasi menu
+                if (screenId === 'home' && prevScreen !== 'splash') {
+                    this.playSound('exit'); // Keluar menu / Kembali ke Beranda
+                } else if (screenId !== 'splash' && screenId !== 'home') {
+                    this.playSound('enter'); // Masuk ke modul/sub-menu
+                } else if (screenId === 'home' && prevScreen === 'splash') {
+                    this.playSound('enter'); // Masuk dari splash screen
+                }
+
+                document.getElementById(`screen-${this.state.currentScreen}`).classList.add('hidden');
+                
+                const header = document.getElementById('global-header');
+                if (screenId === 'splash') {
+                    header.classList.add('hidden');
+                } else {
+                    header.classList.remove('hidden');
+                }
+
+                const btnBack = document.getElementById('btn-back-nav');
+                if (screenId === 'home' || screenId === 'splash') {
+                    btnBack.style.display = 'none';
+                } else {
+                    btnBack.style.display = 'inline-flex';
+                }
+
+                const nextScreen = document.getElementById(`screen-${screenId}`);
+                nextScreen.classList.remove('hidden');
+
+                const titles = {
+                    home: 'Beranda', objectives: 'Tujuan', material: 'Materi Pokok',
+                    simulation: 'Simulasi', examples: 'Contoh Soal', practice: 'Latihan Dasar',
+                    quiz: 'Evaluasi', game: 'Game Zone', reference: 'Referensi', developer: 'Pengembang', result: 'Hasil'
+                };
+                document.getElementById('header-title').innerText = titles[screenId] || 'Bunga Majemuk';
+
+                this.state.currentScreen = screenId;
+                
+                if(this.state.progress[screenId] !== undefined) {
+                    this.state.progress[screenId] = true;
+                    this.saveProgress();
+                }
+
+                if(screenId === 'practice') this.loadPractice(0);
+                if(screenId === 'quiz') {
+                    document.getElementById('quiz-intro').classList.remove('hidden');
+                    document.getElementById('quiz-active').classList.add('hidden');
+                }
+                if(screenId === 'game') {
+                    document.getElementById('game-intro').classList.remove('hidden');
+                    document.getElementById('game-active').classList.add('hidden');
+                }
+                
+                // Re-bind cursor listeners on newly rendered elements
+                setTimeout(() => this.setupCursorHover(), 100);
+            },
+
+            setupCursorHover() {
+                const ring = document.getElementById('cursor-ring');
+                const dot = document.getElementById('cursor-dot');
+                const interactives = document.querySelectorAll('.menu-item, .btn, button, input, .option-btn, .accordion-header');
+                interactives.forEach(el => {
+                    el.onmouseenter = (e) => {
+                        ring.classList.add('active-hover');
+                        dot.classList.add('active-hover');
+                    };
+                    el.onmouseleave = () => {
+                        ring.classList.remove('active-hover');
+                        dot.classList.remove('active-hover');
+                    };
+                });
+            },
+
+            startApp() { this.navigate('home'); },
+            goBack() { this.navigate('home'); },
+
+            toggleTheme() {
+                this.state.theme = this.state.theme === 'light' ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', this.state.theme);
+                localStorage.setItem('bungaMajemukTheme', this.state.theme);
+            },
+
+            toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => console.log(err));
+                } else {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                }
+            },
+
+            toggleAudio() {
+                this.state.isAudioOn = !this.state.isAudioOn;
+                if(!this.state.isAudioOn) window.speechSynthesis.cancel();
+            },
+
+            speakText(text) {
+                if (!this.state.isAudioOn) return;
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            },
+
+            runSimulation() {
+                const p = parseFloat(document.getElementById('sim-p').value) || 1000000;
+                const r = (parseFloat(document.getElementById('sim-r').value) || 10) / 100;
+                const n = parseInt(document.getElementById('sim-n').value) || 3;
+
+                const a = p * Math.pow(1 + r, n);
+                const b = a - p;
+
+                document.getElementById('sim-res-a').innerText = `Rp ${Math.round(a).toLocaleString('id-ID')}`;
+                document.getElementById('sim-res-b').innerText = `Rp ${Math.round(b).toLocaleString('id-ID')}`;
+
+                const chart = document.getElementById('sim-chart');
+                chart.innerHTML = '';
+
+                let maxVal = p * Math.pow(1 + r, n);
+
+                for(let i = 0; i <= n; i++) {
+                    const val = p * Math.pow(1 + r, i);
+                    const heightPercent = (val / maxVal) * 100;
+
+                    const barWrapper = document.createElement('div');
+                    barWrapper.className = 'bar-wrapper';
+                    barWrapper.innerHTML = `
+                        <div class="bar" style="height: ${heightPercent}%">
+                            <span class="bar-value">Rp ${Math.round(val).toLocaleString('id-ID')}</span>
+                        </div>
+                        <span class="bar-label">Th ${i}</span>
+                    `;
+                    chart.appendChild(barWrapper);
+                }
+            },
+
+            renderExamples() {
+                const container = document.getElementById('example-container');
+                container.innerHTML = '';
+                contentData.examples.forEach((ex, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'accordion-item';
+                    item.innerHTML = `
+                        <div class="accordion-header" onclick="this.nextElementSibling.classList.toggle('active')">
+                            <span>📌 Contoh ${idx + 1}: ${ex.q}</span>
+                            <span>▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <p class="mb-2"><strong>Diketahui:</strong><br>${ex.d}</p>
+                            <p class="mb-2"><strong>Ditanya:</strong> ${ex.t}</p>
+                            <p class="mb-2"><strong>Rumus:</strong> ${ex.f}</p>
+                            <p class="mb-2"><strong>Substitusi & Langkah:</strong><br>${ex.s}</p>
+                            <p><strong>Hasil Akhir:</strong> ${ex.j}</p>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            },
+
+            loadPractice(idx) {
+                this.state.practiceCurrent = idx;
+                const data = contentData.practice[idx];
+                document.getElementById('prac-current').innerText = idx + 1;
+                document.getElementById('prac-difficulty').innerText = data.diff;
+                document.getElementById('prac-question-text').innerText = data.q;
+                
+                const optsContainer = document.getElementById('prac-options');
+                optsContainer.innerHTML = '';
+                data.opts.forEach((opt, oIdx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = `${String.fromCharCode(65 + oIdx)}. ${opt}`;
+                    btn.onclick = () => {
+                        document.querySelectorAll('#prac-options .option-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        btn.dataset.selected = oIdx;
+                    };
+                    optsContainer.appendChild(btn);
+                });
+
+                document.getElementById('prac-feedback').className = 'feedback-box';
+                document.getElementById('btn-prac-check').classList.remove('hidden');
+                document.getElementById('btn-prac-next').classList.add('hidden');
+            },
+
+            checkPracticeAnswer() {
+                const selected = document.querySelector('#prac-options .option-btn.selected');
+                if(!selected) return alert('Pilih salah satu jawaban terlebih dahulu!');
+
+                const idx = this.state.practiceCurrent;
+                const data = contentData.practice[idx];
+                const userAns = parseInt(selected.dataset.selected);
+
+                const fb = document.getElementById('prac-feedback');
+                const fbMsg = document.getElementById('prac-feedback-msg');
+                const fbDesc = document.getElementById('prac-feedback-desc');
+
+                if(userAns === data.a) {
+                    fb.className = 'feedback-box show feedback-correct';
+                    fbMsg.innerText = '✅ Jawaban kamu benar!';
+                    selected.classList.add('correct');
+                } else {
+                    fb.className = 'feedback-box show feedback-wrong';
+                    fbMsg.innerText = '❌ Jawaban belum tepat.';
+                    selected.classList.add('wrong');
+                }
+
+                fbDesc.innerText = data.exp;
+                document.getElementById('btn-prac-check').classList.add('hidden');
+                document.getElementById('btn-prac-next').classList.remove('hidden');
+            },
+
+            nextPractice() {
+                if(this.state.practiceCurrent + 1 < contentData.practice.length) {
+                    this.loadPractice(this.state.practiceCurrent + 1);
+                } else {
+                    alert('Selamat! Kamu telah menyelesaikan seluruh soal latihan dasar.');
+                    this.navigate('home');
+                }
+            },
+
+            startQuiz() {
+                document.getElementById('quiz-intro').classList.add('hidden');
+                document.getElementById('quiz-active').classList.remove('hidden');
+                this.state.quizCurrent = 0;
+                this.state.quizScore = 0;
+                this.state.quizAnswers = [];
+                this.loadQuizQuestion(0);
+            },
+
+            loadQuizQuestion(idx) {
+                const q = contentData.quiz[idx];
+                document.getElementById('quiz-current').innerText = idx + 1;
+                document.getElementById('quiz-question-text').innerText = q.q;
+
+                const optsContainer = document.getElementById('quiz-options');
+                optsContainer.innerHTML = '';
+                document.getElementById('btn-quiz-next').disabled = true;
+
+                q.opts.forEach((opt, oIdx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = `${String.fromCharCode(65 + oIdx)}. ${opt}`;
+                    btn.onclick = () => {
+                        document.querySelectorAll('#quiz-options .option-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        btn.dataset.selected = oIdx;
+                        document.getElementById('btn-quiz-next').disabled = false;
+                    };
+                    optsContainer.appendChild(btn);
+                });
+                this.setupCursorHover();
+            },
+
+            nextQuizQuestion() {
+                const selected = document.querySelector('#quiz-options .option-btn.selected');
+                if(!selected) return;
+
+                const userAns = parseInt(selected.dataset.selected);
+                const currentQ = contentData.quiz[this.state.quizCurrent];
+
+                if(userAns === currentQ.a) {
+                    this.state.quizScore += 5; // 20 soal x 5 = 100
+                }
+
+                this.state.quizCurrent++;
+                if(this.state.quizCurrent < contentData.quiz.length) {
+                    this.loadQuizQuestion(this.state.quizCurrent);
+                } else {
+                    this.showResult(this.state.quizScore, 20);
+                }
+            },
+
+            showResult(score, totalCount) {
+                this.navigate('result');
+                document.getElementById('result-score').innerText = score;
+                const correctCount = score / 5;
+                document.getElementById('result-correct').innerText = correctCount;
+                document.getElementById('result-wrong').innerText = totalCount - correctCount;
+
+                let cat = 'Perlu Belajar Lagi';
+                if(score >= 90) cat = 'Sangat Baik 🏆';
+                else if(score >= 80) cat = 'Baik ⭐';
+                else if(score >= 70) cat = 'Cukup 👍';
+
+                document.getElementById('result-category').innerText = cat;
+
+                if(score >= 80) this.createConfetti();
+            },
+
+            startGame() {
+                document.getElementById('game-intro').classList.add('hidden');
+                document.getElementById('game-active').classList.remove('hidden');
+                this.state.game = { active: true, q: 0, score: 0, lives: 3, timer: null, timeVal: 15 };
+                this.loadGameQuestion();
+            },
+
+            loadGameQuestion() {
+                if(this.state.game.lives <= 0 || this.state.game.q >= contentData.games.length) {
+                    alert(`Game Selesai! Skor Akhir Kamu: ${this.state.game.score}`);
+                    this.navigate('home');
+                    return;
+                }
+
+                const g = contentData.games[this.state.game.q];
+                document.getElementById('game-level').innerText = this.state.game.q + 1;
+                document.getElementById('game-score').innerText = this.state.game.score;
+                document.getElementById('game-lives').innerText = '❤️'.repeat(this.state.game.lives);
+                document.getElementById('game-question').innerText = g.q;
+
+                const area = document.getElementById('game-area');
+                area.innerHTML = '';
+                document.getElementById('game-feedback').innerText = '';
+
+                this.state.game.timeVal = 15;
+                document.getElementById('game-timer').innerText = this.state.game.timeVal;
+
+                if(this.state.game.timer) clearInterval(this.state.game.timer);
+                this.state.game.timer = setInterval(() => {
+                    this.state.game.timeVal--;
+                    document.getElementById('game-timer').innerText = this.state.game.timeVal;
+                    if(this.state.game.timeVal <= 0) {
+                        clearInterval(this.state.game.timer);
+                        this.handleGameAnswer(false);
+                    }
+                }, 1000);
+
+                if(g.opts) {
+                    g.opts.forEach((opt, oIdx) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'btn btn-outline';
+                        btn.style.width = '100%';
+                        btn.innerText = opt;
+                        btn.onclick = () => this.handleGameAnswer(oIdx === g.a);
+                        area.appendChild(btn);
+                    });
+                } else {
+                    const btnTrue = document.createElement('button');
+                    btnTrue.className = 'btn btn-primary';
+                    btnTrue.innerText = '✅ BENAR';
+                    btnTrue.onclick = () => this.handleGameAnswer(g.a === true);
+
+                    const btnFalse = document.createElement('button');
+                    btnFalse.className = 'btn btn-secondary';
+                    btnFalse.innerText = '❌ SALAH';
+                    btnFalse.onclick = () => this.handleGameAnswer(g.a === false);
+
+                    area.appendChild(btnTrue);
+                    area.appendChild(btnFalse);
+                }
+                this.setupCursorHover();
+            },
+
+            handleGameAnswer(isCorrect) {
+                if(this.state.game.timer) clearInterval(this.state.game.timer);
+                const fb = document.getElementById('game-feedback');
+
+                if(isCorrect) {
+                    fb.style.color = 'var(--correct)';
+                    fb.innerText = '✅ Benar! +20 Poin';
+                    this.state.game.score += 20;
+                } else {
+                    fb.style.color = 'var(--wrong)';
+                    fb.innerText = '❌ Salah / Waktu Habis!';
+                    this.state.game.lives--;
+                }
+
+                setTimeout(() => {
+                    this.state.game.q++;
+                    this.loadGameQuestion();
+                }, 1200);
+            },
+
+            createConfetti() {
+                for(let i=0; i<40; i++) {
+                    const c = document.createElement('div');
+                    c.className = 'confetti';
+                    c.style.left = `${Math.random() * 100}vw`;
+                    c.style.backgroundColor = ['#00897b', '#ffb300', '#4caf50', '#ffffff'][Math.floor(Math.random()*4)];
+                    c.style.animationDuration = `${Math.random()*2 + 2}s`;
+                    document.body.appendChild(c);
+                    setTimeout(() => c.remove(), 4000);
+                }
+            }
+        };
+
+        window.onload = () => {
+            app.init();
+        };
+    </script>
+</body>
+</html>
